@@ -58,7 +58,7 @@ def get_gp_camera_proxy(port=None):
 def gp_log_callback(level, domain, string, data=None):
     """Logging callback for gphoto2.
     """
-    LOGGER.getChild('gphoto2').debug(domain.decode("utf-8") + u': ' + string.decode("utf-8"))
+    LOGGER.getChild('gphoto2').debug(domain + u': ' + string)
 
 
 class GpCamera(BaseCamera):
@@ -294,6 +294,8 @@ class GpCamera(BaseCamera):
 
         if self.capture_iso != self.preview_iso:
             self.set_config_value('imgsettings', 'iso', self.capture_iso)
+            # get available config with 'gphoto2 --list-config' in terminal
+            self.set_config_value('capturesettings', 'shutterspeed', "0.0062s")
 
         self._captures.append((self._cam.capture(gp.GP_CAPTURE_IMAGE), effect))
         time.sleep(0.3)  # Necessary to let the time for the camera to save the image
