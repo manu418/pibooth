@@ -140,7 +140,7 @@ class ViewPlugin(object):
 
     @pibooth.hookimpl
     def state_processing_enter(self, win):
-        win.show_work_in_progress()
+        pass #win.show_work_in_progress()
 
     @pibooth.hookimpl
     def state_processing_validate(self, cfg, app):
