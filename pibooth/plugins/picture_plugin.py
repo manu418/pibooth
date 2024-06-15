@@ -111,7 +111,7 @@ class PicturePlugin(object):
 
             for capture in captures:
                 count = captures.index(capture)
-                capture.save(osp.join(rawdir, "pibooth{:03}.jpg".format(count)), quality='keep')
+                capture.save(osp.join(rawdir, "pibooth{:03}.jpg".format(count)), quality=95)
 
         LOGGER.info("Creating the final picture")
         default_factory = get_picture_factory(captures, cfg.get('PICTURE', 'orientation'))

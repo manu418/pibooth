@@ -386,7 +386,7 @@ class PictureFactory(object):
         image = self.build()
         LOGGER.info("Save image '%s'", path)
         print(image)
-        image.save(path, quality='keep')
+        image.save(path, quality=95)
         return image
 
 
