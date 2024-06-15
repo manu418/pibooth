@@ -2,6 +2,9 @@
 
 import io
 import time
+from pathlib import Path
+from typing import Any
+
 import pygame
 try:
     import gphoto2 as gp
@@ -150,6 +153,13 @@ class GpCamera(BaseCamera):
         :type capture_data: tuple
         """
         gp_path, effect = capture_data
+        # The latter does only work on the first capture and not on subsequent ones (refer to this issue:
+        # https://github.com/jim-easterbrook/python-gphoto2/issues/51)
+        # Thus, the only clean solution is to only record JPEG (and not RAW+JPEG) files. It is also faster, though.
+        # jpg_name = Path(gp_path.folder,gp_path.name).with_suffix('.JPG').name
+        LOGGER.info(
+            f"Loading photo from folder '{gp_path.folder}' with name '{gp_path.name}' "
+            f"and file type '{gp.GP_FILE_TYPE_NORMAL}'.")
         camera_file = self._cam.file_get(gp_path.folder, gp_path.name, gp.GP_FILE_TYPE_NORMAL)
         if self.delete_internal_memory:
             LOGGER.debug("Delete capture '%s' from internal memory", gp_path.name)
@@ -296,6 +306,7 @@ class GpCamera(BaseCamera):
             self.set_config_value('imgsettings', 'iso', self.capture_iso)
             # get available config with 'gphoto2 --list-config' in terminal
             self.set_config_value('capturesettings', 'shutterspeed', "0.0062s")
+            # TODO: here, we could also set the auto-focus stuff but maybe there are better places
 
         self._captures.append((self._cam.capture(gp.GP_CAPTURE_IMAGE), effect))
         time.sleep(0.3)  # Necessary to let the time for the camera to save the image

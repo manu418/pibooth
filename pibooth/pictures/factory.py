@@ -191,6 +191,7 @@ class PictureFactory(object):
         for src_image in self._iter_images():
             pos_x, pos_y, max_w, max_h = next(offset_generator)
             src_image, width, height = self._image_resize_keep_ratio(src_image, max_w, max_h, self._crop)
+            print(width, height)
             # Adjust position to have identical margin between borders and images
             if len(self._images) < 4:
                 pos_x, pos_y = pos_x + (max_w - width) // 2, pos_y + (max_h - height) // 2
@@ -384,7 +385,8 @@ class PictureFactory(object):
             os.mkdir(dirname)
         image = self.build()
         LOGGER.info("Save image '%s'", path)
-        image.save(path)
+        print(image)
+        image.save(path, quality=95)
         return image
 
 

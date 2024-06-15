@@ -144,6 +144,7 @@ def get_best_orientation(captures):
     :return: orientation PORTRAIT or LANDSCAPE
     :rtype: str
     """
+    print(captures[0].size)
     is_portrait = captures[0].size[0] < captures[0].size[1]
     if len(captures) == 1 or len(captures) == 4:
         if is_portrait:
