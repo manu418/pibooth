@@ -161,6 +161,8 @@ def get_best_orientation(captures):
     return orientation
 
 
+# TODO: out of reasons noone knows for real, this function sets the final pictures size in pixels
+#  (which cannot be configured?!). Maybe change that to be able to set a specific resolution.
 def get_picture_factory(captures, orientation=AUTO, paper_format=(4, 6), force_pil=False, dpi=600):
     """Return the picture factory use to concatenate the captures.
 
