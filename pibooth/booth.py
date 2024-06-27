@@ -307,6 +307,8 @@ class PiApplication(object):
         for event in events:
             if event.type == pygame.KEYDOWN and event.key in [pygame.K_p, pygame.K_UP]:
                 return event
+            # refer to https://stackoverflow.com/questions/34287938/how-to-distinguish-left-click-right-click-mouse-clicks-in-pygame
+            # for details on mouse buttons
             if (event.type == pygame.MOUSEBUTTONUP and event.button in (1, 2, 3)) or event.type == pygame.FINGERUP:
                 pos = get_event_pos(self._window.display_size, event)
                 rect = self._window.get_rect()
