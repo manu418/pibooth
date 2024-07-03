@@ -29,22 +29,20 @@ from pibooth.view import PiWindow
 from pibooth.config import PiConfigParser, PiConfigMenu
 from pibooth.printer import PRINTER_TASKS_UPDATED, Printer
 
-
 # Set the default pin factory to a mock factory if pibooth is not started a Raspberry Pi
 try:
     filterwarnings("ignore", category=PinFactoryFallback)
     GPIO_INFO = "on Raspberry pi {0}".format(pi_info().model)
 except BadPinFactory:
     from gpiozero.pins.mock import MockFactory
+
     Device.pin_factory = MockFactory()
     GPIO_INFO = "without physical GPIO, fallback to GPIO mock"
-
 
 BUTTONDOWN = pygame.USEREVENT + 1
 
 
 class PiApplication(object):
-
     """Main class representing the ``pibooth`` software.
     The following attributes are available for use in plugins:
 
@@ -303,12 +301,31 @@ class PiApplication(object):
 
     def find_capture_event(self, events):
         """Return the first found event if found in the list.
+
+        Mouse buttons (from
+        https://stackoverflow.com/questions/34287938/how-to-distinguish-left-click-right-click-mouse-clicks-in-pygame):
+            1 - left click
+            2 - middle click
+            3 - right click
+            4 - scroll up
+            5 - scroll down
         """
         for event in events:
-            if event.type == pygame.KEYDOWN and event.key in [pygame.K_p, pygame.K_UP]:
+            if (
+                    (
+                            event.type == pygame.KEYDOWN and event.key in [  # keystrokes
+                        pygame.K_p,
+                        pygame.K_UP  # presenter
+                    ]
+                    )
+                    or
+                    (
+                            event.type == pygame.MOUSEBUTTONDOWN and event.button in [  # mouse buttons
+                        2,  # middle click from red buzzer
+                    ]
+                    )
+            ):
                 return event
-            # refer to https://stackoverflow.com/questions/34287938/how-to-distinguish-left-click-right-click-mouse-clicks-in-pygame
-            # for details on mouse buttons
             if (event.type == pygame.MOUSEBUTTONUP and event.button in (1, 2, 3)) or event.type == pygame.FINGERUP:
                 pos = get_event_pos(self._window.display_size, event)
                 rect = self._window.get_rect()
@@ -322,7 +339,7 @@ class PiApplication(object):
         """Return the first found event if found in the list.
         """
         for event in events:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_e\
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_e \
                     and pygame.key.get_mods() & pygame.KMOD_CTRL:
                 return event
             if (event.type == pygame.MOUSEBUTTONUP and event.button in (1, 2, 3)) or event.type == pygame.FINGERUP:
