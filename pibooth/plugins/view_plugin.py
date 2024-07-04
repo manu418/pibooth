@@ -6,7 +6,6 @@ from pibooth.utils import LOGGER, get_crash_message, PoolingTimer
 
 
 class ViewPlugin(object):
-
     """Plugin to manage the pibooth window dans transitions.
     """
 
@@ -126,10 +125,6 @@ class ViewPlugin(object):
         win.set_capture_number(self.count, app.capture_nbr)
 
     @pibooth.hookimpl
-    def state_preview_validate(self, cfg, app, events):
-        return 'capture'
-
-    @pibooth.hookimpl
     def state_capture_do(self, app, win):
         win.set_capture_number(self.count, app.capture_nbr)
 
@@ -141,11 +136,11 @@ class ViewPlugin(object):
 
     @pibooth.hookimpl
     def state_processing_enter(self, win):
-        pass #win.show_work_in_progress()
+        pass  # win.show_work_in_progress()
 
     @pibooth.hookimpl
     def state_processing_validate(self, cfg, app):
-        if app.printer.is_ready() and cfg.getfloat('PRINTER', 'printer_delay') > 0\
+        if app.printer.is_ready() and cfg.getfloat('PRINTER', 'printer_delay') > 0 \
                 and app.count.remaining_duplicates > 0:
             return 'print'
         return 'finish'  # Can not print

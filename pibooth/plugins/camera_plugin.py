@@ -8,7 +8,6 @@ from pibooth.utils import LOGGER
 
 
 class CameraPlugin(object):
-
     """Plugin to manage the camera captures.
     """
 
@@ -75,12 +74,20 @@ class CameraPlugin(object):
         pygame.event.pump()  # Before blocking actions
         # check if we want a second click until the picture is taken or a countdown (only the already done click)
         if cfg.getboolean('WINDOW', 'preview_requires_second_click'):
-            app.camera.preview_until_second_click()
+            app.camera.preview_until_second_click(timeout_s=20)
         else:
             if cfg.getboolean('WINDOW', 'preview_countdown'):
                 app.camera.preview_countdown(cfg.getint('WINDOW', 'preview_delay'))
             else:
                 app.camera.preview_wait(cfg.getint('WINDOW', 'preview_delay'))
+
+    @pibooth.hookimpl
+    def state_preview_validate(self, cfg, app, events):
+        if app.camera.second_click_timeout:
+            app.camera.stop_preview()
+            return "wait"
+        else:
+            return 'capture'
 
     @pibooth.hookimpl
     def state_preview_exit(self, cfg, app):

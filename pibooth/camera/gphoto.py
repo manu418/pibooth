@@ -86,6 +86,7 @@ class GpCamera(BaseCamera):
         self._gp_logcb = None
         self._preview_compatible = True
         self._preview_viewfinder = False
+        self.second_click_timeout = False
 
     def _specific_initialization(self):
         """Camera initialization.
@@ -230,6 +231,7 @@ class GpCamera(BaseCamera):
             self._window.show_image(self._get_preview_image())
 
     def preview_until_second_click(self, timeout_s=0):
+        self.second_click_timeout = False
         start_time = time.time()
         while True:
             self._show_overlay(text="Press again for taking image", alpha=70)
@@ -246,6 +248,7 @@ class GpCamera(BaseCamera):
                     return
             if 0 < timeout_s < time.time() - start_time:
                 LOGGER.info(f"Timeout!")
+                self.second_click_timeout = True
                 return
             # let the CPU not die
             time.sleep(0.01)
