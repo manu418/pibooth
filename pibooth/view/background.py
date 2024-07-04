@@ -644,7 +644,7 @@ class FinishedWithImageBackground(FinishedBackground):
             # Note: '0.9' ratio comes from PiWindow._update_foreground() method which
             # lets a margin between window borders and fullscreen foreground picture
             frgnd_rect = pygame.Rect(0, 0, *pictures.sizing.new_size_keep_aspect_ratio(
-                self.foreground_size, (self._rect.size[0] * 1, self._rect.size[1]*1)))
+                self.foreground_size, (self._rect.size[0] * 0.9, self._rect.size[1]*0.9)))
             xmargin = abs(self._rect.width - frgnd_rect.width) // 2
             ymargin = abs(self._rect.height - frgnd_rect.height) // 2
 

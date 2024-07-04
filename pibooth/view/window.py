@@ -89,7 +89,7 @@ class PiWindow(object):
         image_name = id(pil_image)
 
         if pos == self.FULLSCREEN:
-            image_size_max = (self.surface.get_size()[0] * 1, self.surface.get_size()[1] * 1)
+            image_size_max = (self.surface.get_size()[0] * 0.9, self.surface.get_size()[1] * 0.9)
         else:
             image_size_max = (self.surface.get_size()[0] * 0.48, self.surface.get_size()[1])
 
