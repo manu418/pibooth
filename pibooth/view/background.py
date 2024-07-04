@@ -252,12 +252,12 @@ class IntroBackground(Background):
                                self._rect.height * 0.2 - self._text_border)
             align = 'bottom-center'
         elif self.arrow_location == ARROW_BUZZER:
-            rect = pygame.Rect(self._text_border, self._text_border,
+            rect = pygame.Rect(self._text_border, 0,
                                self._rect.width / 4 - 2 * self._text_border,
-                               self._rect.height * 0.2 - self._text_border)
-            align = 'center'
+                               self._rect.height * 0.7 - self._text_border)
+            align = 'bottom-right'
             rotate = 90
-        else:
+        else:  # ARROW_TOP
             rect = pygame.Rect(self._text_border, self._rect.height * 0.4,
                                self._rect.width / 2 - 2 * self._text_border,
                                self._rect.height * 0.6 - self._text_border)
