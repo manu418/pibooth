@@ -260,9 +260,19 @@ class GpCamera(BaseCamera):
             event_list = list(pygame.event.get(pump=True))
             for event in event_list:
                 if (
-                        event.type == pygame.MOUSEBUTTONDOWN
-                        and event.type == pygame.MOUSEBUTTONDOWN
-                        and event.button == 2
+                        (
+                                event.type == pygame.MOUSEBUTTONDOWN
+                                and event.type == pygame.MOUSEBUTTONDOWN
+                                and event.button == 2
+                        )
+                        or
+                        (
+                                event.type == pygame.KEYDOWN
+                                and event.key in [  # keystrokes
+                                    pygame.K_p,
+                                    pygame.K_UP  # presenter
+                                ]
+                        )
                 ):
                     LOGGER.info(f"Second click detected!")
                     self._show_overlay(get_translated_text('smile'), alpha)
