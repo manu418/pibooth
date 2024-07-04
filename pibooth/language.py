@@ -64,7 +64,7 @@ DEFAULT = {
         'oops': "Ups! Noget gik galt",
     },
     'en': {
-        'intro': "Take a photo",
+        'intro': "Press buzzer",
         'intro_print': "Or you can\nstill print\nthis photo",
         'choose': "Choose your layout",
         '1': "1 photo",

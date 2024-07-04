@@ -206,11 +206,11 @@ class IntroBackground(Background):
         Background.resize(self, screen)
         if self._need_update and self.arrow_location != ARROW_HIDDEN:
             if self.arrow_location == ARROW_TOUCH:
-                size = (self._rect.width * 0.2, self._rect.height * 0.2)
+                size = (self._rect.width * 0.1, self._rect.height * 0.1)
 
                 self.left_arrow = pictures.get_pygame_image("camera.png", size, vflip=False, color=self._text_color)
 
-                x = int(self._rect.width * 0.2)
+                x = int(self._rect.width * 0.1)
                 y = int(self._rect.height // 2)
             else:
                 size = (self._rect.width * 0.3, self._rect.height * 0.3)
@@ -242,8 +242,8 @@ class IntroBackground(Background):
             align = 'bottom-center'
         elif self.arrow_location == ARROW_TOUCH:
             rect = pygame.Rect(self._text_border, self._text_border,
-                               self._rect.width / 2 - 2 * self._text_border,
-                               self._rect.height * 0.4 - self._text_border)
+                               self._rect.width / 4 - 2 * self._text_border,
+                               self._rect.height * 0.2 - self._text_border)
             align = 'bottom-center'
         else:
             rect = pygame.Rect(self._text_border, self._rect.height * 0.4,
@@ -644,7 +644,7 @@ class FinishedWithImageBackground(FinishedBackground):
             # Note: '0.9' ratio comes from PiWindow._update_foreground() method which
             # lets a margin between window borders and fullscreen foreground picture
             frgnd_rect = pygame.Rect(0, 0, *pictures.sizing.new_size_keep_aspect_ratio(
-                self.foreground_size, (self._rect.size[0] * 0.9, self._rect.size[1]*0.9)))
+                self.foreground_size, (self._rect.size[0] * 1, self._rect.size[1]*1)))
             xmargin = abs(self._rect.width - frgnd_rect.width) // 2
             ymargin = abs(self._rect.height - frgnd_rect.height) // 2
 
