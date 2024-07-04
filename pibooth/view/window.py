@@ -16,7 +16,6 @@ from pibooth.pictures import sizing
 
 
 class PiWindow(object):
-
     """Class to handle the window.
     The following attributes are available for use in plugins:
 
@@ -29,6 +28,7 @@ class PiWindow(object):
     """
 
     CENTER = 'center'
+    CENTER_SHIFTED = 'center_shifted'
     RIGHT = 'right'
     LEFT = 'left'
     FULLSCREEN = 'fullscreen'
@@ -71,9 +71,10 @@ class PiWindow(object):
         self._capture_number = (0, 4)  # (current, max)
 
         self._pos_map = {self.CENTER: self._center_pos,
+                         self.CENTER_SHIFTED: self._center_shifted_pos,
                          self.RIGHT: self._right_pos,
                          self.LEFT: self._left_pos,
-                         self.FULLSCREEN: self._center_pos}
+                         self.FULLSCREEN: self._center_shifted_pos}
 
         # Don't use pygame.mouse.get_cursor() because will be removed in pygame2
         self._cursor = ((16, 16), (0, 0),
@@ -174,7 +175,7 @@ class PiWindow(object):
             rect.bottomleft = self.get_rect().bottomleft
             rect_image = image.get_rect(left=10, centery=rect.centery)
             rect_label = label.get_rect(centerx=rect_image.right + (rect.width -
-                                        rect_image.right) // 2, centery=rect.centery)
+                                                                    rect_image.right) // 2, centery=rect.centery)
             self.surface.blit(bg, rect.topleft)
             self.surface.blit(image, rect_image.topleft)
             self.surface.blit(label, rect_label.topleft)
@@ -184,6 +185,13 @@ class PiWindow(object):
         Return the position of the given image to be centered on window.
         """
         pos = self.surface.get_rect().center
+        return image.get_rect(center=pos) if image else pos
+
+    def _center_shifted_pos(self, image):
+        """
+        Return the position of the given image to be centered on window.
+        """
+        pos = (self.surface.get_rect().centerx + 30, self.surface.get_rect().centery)
         return image.get_rect(center=pos) if image else pos
 
     def _left_pos(self, image):
