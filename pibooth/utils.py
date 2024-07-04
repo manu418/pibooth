@@ -199,6 +199,7 @@ def get_logging_filename():
 
 
 def get_crash_message():
+    import traceback
     msg = "system='{}', node='{}', release='{}', version='{}', machine='{}', processor='{}'\n".format(*platform.uname())
     msg += " " + "*" * 83 + "\n"
     msg += " * " + "Oops! It seems that pibooth has crached".center(80) + "*\n"
@@ -206,6 +207,7 @@ def get_crash_message():
     if get_logging_filename():
         msg += " * " + ("and post the file: {}".format(get_logging_filename())).center(80) + "*\n"
     msg += " " + "*" * 83
+    msg += "\n" + traceback.format_exc()
     return msg
 
 
