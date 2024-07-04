@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import pygame
+
 try:
     import gphoto2 as gp
 except ImportError:
@@ -65,7 +66,6 @@ def gp_log_callback(level, domain, string, data=None):
 
 
 class GpCamera(BaseCamera):
-
     """gPhoto2 camera management.
     """
 
@@ -92,8 +92,8 @@ class GpCamera(BaseCamera):
         """
         self._gp_logcb = gp.check_result(gp.gp_log_add_func(gp.GP_LOG_VERBOSE, gp_log_callback))
         abilities = self._cam.get_abilities()
-        self._preview_compatible = gp.GP_OPERATION_CAPTURE_PREVIEW ==\
-            abilities.operations & gp.GP_OPERATION_CAPTURE_PREVIEW
+        self._preview_compatible = gp.GP_OPERATION_CAPTURE_PREVIEW == \
+                                   abilities.operations & gp.GP_OPERATION_CAPTURE_PREVIEW
         if not self._preview_compatible:
             LOGGER.warning("The connected DSLR camera is not compatible with preview")
         else:
@@ -228,6 +228,25 @@ class GpCamera(BaseCamera):
             if self._preview_viewfinder:
                 self.set_config_value('actions', 'viewfinder', 1)
             self._window.show_image(self._get_preview_image())
+
+    def preview_until_second_click(self, timeout_s=0):
+        start_time = time.time()
+        while True:
+            self._show_overlay(text="Press again for taking image", alpha=70)
+            updated_rect = self._window.show_image(self._get_preview_image())
+            if updated_rect:
+                pygame.display.update(updated_rect)
+            event_list = list(pygame.event.get(pump=True))
+            for event in event_list:
+                if (
+                        event.type == pygame.MOUSEBUTTONDOWN
+                        and event.type == pygame.MOUSEBUTTONDOWN
+                        and event.button == 2):
+                    LOGGER.info(f"Second click detected!")
+                    return
+            if 0 < timeout_s < time.time() - start_time:
+                LOGGER.info(f"Timeout!")
+                return
 
     def preview_countdown(self, timeout, alpha=80):
         """Show a countdown of `timeout` seconds on the preview.

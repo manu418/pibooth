@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pygame
 
 import pibooth
 from pibooth.utils import LOGGER, get_crash_message, PoolingTimer
@@ -125,7 +126,7 @@ class ViewPlugin(object):
         win.set_capture_number(self.count, app.capture_nbr)
 
     @pibooth.hookimpl
-    def state_preview_validate(self):
+    def state_preview_validate(self, cfg, app, events):
         return 'capture'
 
     @pibooth.hookimpl

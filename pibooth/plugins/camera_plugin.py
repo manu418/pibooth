@@ -73,10 +73,14 @@ class CameraPlugin(object):
     @pibooth.hookimpl
     def state_preview_do(self, cfg, app):
         pygame.event.pump()  # Before blocking actions
-        if cfg.getboolean('WINDOW', 'preview_countdown'):
-            app.camera.preview_countdown(cfg.getint('WINDOW', 'preview_delay'))
+        # check if we want a second click until the picture is taken or a countdown (only the already done click)
+        if cfg.getboolean('WINDOW', 'preview_requires_second_click'):
+            app.camera.preview_until_second_click()
         else:
-            app.camera.preview_wait(cfg.getint('WINDOW', 'preview_delay'))
+            if cfg.getboolean('WINDOW', 'preview_countdown'):
+                app.camera.preview_countdown(cfg.getint('WINDOW', 'preview_delay'))
+            else:
+                app.camera.preview_wait(cfg.getint('WINDOW', 'preview_delay'))
 
     @pibooth.hookimpl
     def state_preview_exit(self, cfg, app):

@@ -4,6 +4,7 @@ import pluggy
 
 hookspec = pluggy.HookspecMarker('pibooth')
 
+
 # --- Pibooth state-independent hooks ------------------------------------------
 
 
@@ -15,6 +16,8 @@ def pibooth_configure(cfg):
 
     :param cfg: application configuration
     """
+    cfg.add_option('WINDOW', 'preview_requires_second_click', True,
+                   "If the preview should be shown until a second click is made.")
 
 
 @hookspec
