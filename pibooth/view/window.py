@@ -191,7 +191,7 @@ class PiWindow(object):
         """
         Return the position of the given image to be centered on window.
         """
-        pos = (self.surface.get_rect().centerx + 80, self.surface.get_rect().centery)
+        pos = (self.surface.get_rect().centerx + 100, self.surface.get_rect().centery)
         return image.get_rect(center=pos) if image else pos
 
     def _left_pos(self, image):
