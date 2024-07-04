@@ -74,7 +74,7 @@ class CameraPlugin(object):
         pygame.event.pump()  # Before blocking actions
         # check if we want a second click until the picture is taken or a countdown (only the already done click)
         if cfg.getboolean('WINDOW', 'preview_requires_second_click'):
-            app.camera.preview_until_second_click(timeout_s=20)
+            app.camera.preview_until_second_click(timeout_s=30)
         else:
             if cfg.getboolean('WINDOW', 'preview_countdown'):
                 app.camera.preview_countdown(cfg.getint('WINDOW', 'preview_delay'))
@@ -85,6 +85,8 @@ class CameraPlugin(object):
     def state_preview_validate(self, cfg, app, events):
         if app.camera.second_click_timeout:
             app.camera.stop_preview()
+            if app.camera._preview_viewfinder:
+                app.camera.set_config_value('actions', 'viewfinder', 0)
             return "wait"
         else:
             return 'capture'

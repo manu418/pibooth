@@ -233,8 +233,27 @@ class GpCamera(BaseCamera):
     def preview_until_second_click(self, alpha=80, timeout_s=0):
         self.second_click_timeout = False
         start_time = time.time()
+        last_told_remaining_time = None
         while True:
-            self._show_overlay(text="Press again for taking image\n(seconds left)", alpha=alpha)
+            remaining_time = int(round(timeout_s - (time.time() - start_time)))
+            if (
+                    self._overlay is None
+                    or
+                    (
+                            timeout_s != 0
+                            and last_told_remaining_time is not None
+                            and last_told_remaining_time == remaining_time + 5
+                    )
+            ):
+                self._show_overlay(
+                    text=(
+                        "Press again for taking image"
+                        if timeout_s == 0 or remaining_time > 0.51 * timeout_s else
+                        f"Heading home in {round(remaining_time)} seconds :p"
+                    ),
+                    alpha=alpha
+                )
+                last_told_remaining_time = remaining_time
             updated_rect = self._window.show_image(self._get_preview_image())
             if updated_rect:
                 pygame.display.update(updated_rect)
@@ -254,7 +273,7 @@ class GpCamera(BaseCamera):
                 self.second_click_timeout = True
                 return
             # let the CPU not die
-            time.sleep(0.01)
+            time.sleep(0.1)
 
     def preview_countdown(self, timeout, alpha=80):
         """Show a countdown of `timeout` seconds on the preview.
