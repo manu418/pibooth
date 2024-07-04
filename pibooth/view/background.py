@@ -266,7 +266,7 @@ class IntroBackground(Background):
 
     def paint(self, screen):
         Background.paint(self, screen)
-        if self.arrow_location != ARROW_HIDDEN:
+        if self.arrow_location not in [ARROW_HIDDEN, ARROW_BUZZER]:
             screen.blit(self.left_arrow, self.left_arrow_pos)
 
 
