@@ -230,11 +230,11 @@ class GpCamera(BaseCamera):
                 self.set_config_value('actions', 'viewfinder', 1)
             self._window.show_image(self._get_preview_image())
 
-    def preview_until_second_click(self, timeout_s=0):
+    def preview_until_second_click(self, alpha=80, timeout_s=0):
         self.second_click_timeout = False
         start_time = time.time()
         while True:
-            self._show_overlay(text="Press again for taking image", alpha=70)
+            self._show_overlay(text="Press again for taking image\n(seconds left)", alpha=alpha)
             updated_rect = self._window.show_image(self._get_preview_image())
             if updated_rect:
                 pygame.display.update(updated_rect)
@@ -243,8 +243,11 @@ class GpCamera(BaseCamera):
                 if (
                         event.type == pygame.MOUSEBUTTONDOWN
                         and event.type == pygame.MOUSEBUTTONDOWN
-                        and event.button == 2):
+                        and event.button == 2
+                ):
                     LOGGER.info(f"Second click detected!")
+                    self._show_overlay(get_translated_text('smile'), alpha)
+                    self._window.show_image(self._get_preview_image())
                     return
             if 0 < timeout_s < time.time() - start_time:
                 LOGGER.info(f"Timeout!")
