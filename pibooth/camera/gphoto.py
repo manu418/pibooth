@@ -247,6 +247,8 @@ class GpCamera(BaseCamera):
             if 0 < timeout_s < time.time() - start_time:
                 LOGGER.info(f"Timeout!")
                 return
+            # let the CPU not die
+            time.sleep(0.01)
 
     def preview_countdown(self, timeout, alpha=80):
         """Show a countdown of `timeout` seconds on the preview.
