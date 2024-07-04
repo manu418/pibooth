@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os.path as osp
+from typing import Optional
+
 import pygame
 
 from pibooth import fonts, pictures
@@ -10,9 +12,10 @@ ARROW_TOP = 'top'
 ARROW_BOTTOM = 'bottom'
 ARROW_HIDDEN = 'hidden'
 ARROW_TOUCH = 'touchscreen'
+ARROW_BUZZER = 'buzzer'
 
 
-def multiline_text_to_surfaces(text, color, rect, align='center'):
+def multiline_text_to_surfaces(text, color, rect, align='center', rotate_degrees: Optional[float] = 0):
     """Return a list of surfaces corresponding to each line of the text.
     The surfaces are next to each others in order to fit the given rect.
 
@@ -44,6 +47,7 @@ def multiline_text_to_surfaces(text, color, rect, align='center'):
         else:
             raise ValueError("Invalid horizontal alignment '{}'".format(align))
 
+        surface = pygame.transform.rotate(surface, rotate_degrees)
         height = surface.get_rect().height
         if align.startswith('top'):
             y = rect.top + i * height
@@ -94,14 +98,14 @@ class Background(object):
         pygame.draw.rect(outlines, pygame.Color(255, 0, 0), outlines.get_rect(), 2)
         return outlines
 
-    def _write_text(self, text, rect=None, align='center'):
+    def _write_text(self, text, rect=None, align='center', rotate_degrees=0):
         """Write a text in the given rectangle.
         """
         if not rect:
             rect = self._rect.inflate(-self._text_border, -self._text_border)
         if self._show_outlines:
             self._outlines.append((self._make_outlines(rect.size), rect))
-        self._texts.extend(multiline_text_to_surfaces(text, self._text_color, rect, align))
+        self._texts.extend(multiline_text_to_surfaces(text, self._text_color, rect, align, rotate_degrees))
 
     def set_color(self, color_or_path):
         """Set background color (RGB tuple) or path to an image that used to
@@ -164,18 +168,19 @@ class Background(object):
             overlay_name = "{}.png".format(self._name)
             if osp.isfile(pictures.get_filename(overlay_name)):
                 self._overlay = pictures.get_pygame_image(
-                    pictures.get_filename(overlay_name), (self._rect.width, self._rect.height), color=self._text_color, bg_color=self._background_color)
+                    pictures.get_filename(overlay_name), (self._rect.width, self._rect.height), color=self._text_color,
+                    bg_color=self._background_color)
 
             self.resize_texts()
             self._need_update = True
 
-    def resize_texts(self, rect=None, align='center'):
+    def resize_texts(self, rect=None, align='center', rotate_degrees=0):
         """Update text surfaces.
         """
         self._texts = []
         text = get_translated_text(self._name)
         if text:
-            self._write_text(text, rect, align)
+            self._write_text(text, rect, align, rotate_degrees)
 
     def paint(self, screen):
         """Paint and animate the surfaces on the screen.
@@ -204,7 +209,7 @@ class IntroBackground(Background):
 
     def resize(self, screen):
         Background.resize(self, screen)
-        if self._need_update and self.arrow_location != ARROW_HIDDEN:
+        if self._need_update and self.arrow_location not in [ARROW_HIDDEN, ARROW_BUZZER]:
             if self.arrow_location == ARROW_TOUCH:
                 size = (self._rect.width * 0.1, self._rect.height * 0.1)
 
@@ -230,6 +235,7 @@ class IntroBackground(Background):
     def resize_texts(self):
         """Update text surfaces.
         """
+        rotate = 0
         if self.arrow_location == ARROW_HIDDEN:
             rect = pygame.Rect(self._text_border, self._text_border,
                                self._rect.width / 2 - 2 * self._text_border,
@@ -245,12 +251,18 @@ class IntroBackground(Background):
                                self._rect.width / 4 - 2 * self._text_border,
                                self._rect.height * 0.2 - self._text_border)
             align = 'bottom-center'
+        elif self.arrow_location == ARROW_BUZZER:
+            rect = pygame.Rect(self._text_border, self._text_border,
+                               self._rect.width / 4 - 2 * self._text_border,
+                               self._rect.height * 0.2 - self._text_border)
+            align = 'center'
+            rotate = 90
         else:
             rect = pygame.Rect(self._text_border, self._rect.height * 0.4,
                                self._rect.width / 2 - 2 * self._text_border,
                                self._rect.height * 0.6 - self._text_border)
             align = 'top-center'
-        Background.resize_texts(self, rect, align)
+        Background.resize_texts(self, rect, align, rotate)
 
     def paint(self, screen):
         Background.paint(self, screen)
@@ -644,7 +656,7 @@ class FinishedWithImageBackground(FinishedBackground):
             # Note: '0.9' ratio comes from PiWindow._update_foreground() method which
             # lets a margin between window borders and fullscreen foreground picture
             frgnd_rect = pygame.Rect(0, 0, *pictures.sizing.new_size_keep_aspect_ratio(
-                self.foreground_size, (self._rect.size[0] * 0.9, self._rect.size[1]*0.9)))
+                self.foreground_size, (self._rect.size[0] * 0.9, self._rect.size[1] * 0.9)))
             xmargin = abs(self._rect.width - frgnd_rect.width) // 2
             ymargin = abs(self._rect.height - frgnd_rect.height) // 2
 
